@@ -28,17 +28,17 @@ void BitcoinExchange::handleInputFile(std::string fileName)
             std::cout << "Error: bad input => " << line << std::endl;
             continue;
         }
-        std::string datePart == line.substr(0, sep);
+        std::string datePart = line.substr(0, sep);
         std::string valuePart = line.substr(sep + 1);
         if (datePart.length() != 10) {
             std::cout << "Error: bad input => " << line << std::endl;
             continue;
         }
-        if (datePart[4] != '-' || datepart[7] != '-') {
+        if (datePart[4] != '-' || datePart[7] != '-') {
             std::cout << "Error: bad input => " << line << std::endl;
             continue;
         }
-        if (checkDigits(datePart)) {
+        if (!checkDigits(datePart)) {
             std::cout << "Error: bad input => " << line << std::endl;
             continue;
         }
@@ -48,7 +48,7 @@ void BitcoinExchange::handleInputFile(std::string fileName)
         int y = std::atoi(year.c_str());
         int m = std::atoi(month.c_str());
         int d = std::atoi(day.c_str());
-        if (checkDate(y, m, d) = false) {
+        if (!checkDate(y, m, d) {
             std::cout << "Error: bad input => " << line << std::endl;
             continue;
         }
@@ -83,7 +83,7 @@ bool BitcoinExchange::checkDigits(std::string date) {
     int i = 0;
     while (date[i])
     {
-        if (!std:isdigit(date[i]))
+        if (!std::isdigit(date[i]))
         {
             if (date[i] == 'i')
                 continue;
