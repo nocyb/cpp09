@@ -1,10 +1,8 @@
 #pragma once
 
 #include <string>
-#include <map>
 #include <iostream>
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <cstdlib>
 #include <stack>
@@ -12,13 +10,14 @@
 class Rpn
 {
     public:
-    Rpn(std::string input);
+    Rpn();
     Rpn(Rpn const &other);
     Rpn &operator=(const Rpn &other);
     ~Rpn();
+    void calculate(std::string input);
 
     private:
-    stack<int> nbStack;
-}
+    std::stack<int> nbStack;
+};
 
 bool parseInput(std::string input);
