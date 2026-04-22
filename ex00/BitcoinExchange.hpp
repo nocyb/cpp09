@@ -12,12 +12,15 @@ class BitcoinExchange
 {
     public:
     BitcoinExchange();
+    BitcoinExchange(BitcoinExchange const &other);
+    BitcoinExchange &operator=(const BitcoinExchange &other);
     ~BitcoinExchange();
+    void handleInputFile(std::string fileName);
 
     private:
     std::map<std::string, double> _database;
-    void handleInputFile(std::strign fileName);
     void checkValues(float value);
     bool checkDate(int y, int m, int d);
     bool checkExchangeRate(std::string rate);
-}
+    bool checkDigits(std::string date);
+};

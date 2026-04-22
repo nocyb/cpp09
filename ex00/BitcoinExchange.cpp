@@ -6,13 +6,13 @@ BitcoinExchange::BitcoinExchange() {
         throw(std::string) "cannot open the database file";
     std::string dataLine;
     getline(data, dataLine);
-    if (dataLine != "date ,exchange_rate")
-        throw(std::string) "wrong format for database file: date ,exchange_rate";
+    if (dataLine != "date,exchange_rate")
+        throw(std::string) "wrong format for database file:date ,exchange_rate";
     while (getline(data, dataLine))
     {
         size_t sep = dataLine.find(',');
         if (sep == std::string::npos)
-            throw(std::string) "wrong format for database file: date ,exchange_rate";
+            throw(std::string) "wrong format for database file:date ,exchange_rate";
         std::string datePart = dataLine.substr(0, sep);
         std::string exchangeRatePart = dataLine.substr(sep + 1);
         if (!checkDigits(datePart))
@@ -57,8 +57,8 @@ void BitcoinExchange::handleInputFile(std::string fileName)
             std::cout << "Error: bad input => " << line << std::endl;
             continue;
         }
-        std::string datePart = line.substr(0, sep);
-        std::string valuePart = line.substr(sep + 1);
+        std::string datePart = line.substr(0, 10);
+        std::string valuePart = line.substr(sep + 2);
         if (datePart.length() != 10) {
             std::cout << "Error: bad input => " << line << std::endl;
             continue;
@@ -77,7 +77,7 @@ void BitcoinExchange::handleInputFile(std::string fileName)
         int y = std::atoi(year.c_str());
         int m = std::atoi(month.c_str());
         int d = std::atoi(day.c_str());
-        if (!checkDate(y, m, d) {
+        if (!checkDate(y, m, d)) {
             std::cout << "Error: bad input => " << line << std::endl;
             continue;
         }
@@ -95,7 +95,7 @@ void BitcoinExchange::handleInputFile(std::string fileName)
             continue;
         }
         std::map<std::string, double>::iterator it = _database.lower_bound(datePart);
-        if (it != _database.end() && it->first = datePart) {
+        if (it != _database.end() && it->first == datePart) {
             std::cout << datePart << " => " << value << " = " << (value * it->second) << std::endl;
         }
         else if (it == _database.begin())
@@ -140,9 +140,9 @@ bool BitcoinExchange::checkExchangeRate(std::string rate)
     int i = 0;
     while(rate[i])
     {
-        if (!std::isdigit(date[i]))
+        if (!std::isdigit(rate[i]))
         {
-            if (date[i] == '.')
+            if (rate[i] == '.')
                 continue;
             else
                 return false;
