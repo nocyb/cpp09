@@ -44,7 +44,8 @@ void BitcoinExchange::handleInputFile(std::string fileName)
         throw(std::string) "cannot open the input file";
     std::string line;
     getline(inputFile, line);
-    if (line != "date | value")
+    size_t dateWord = line.find("date");
+    if (dateWord == std::string::npos)
         throw(std::string) "wrong format for input file: expected date | value";
     while (getline(inputFile, line))
     {
@@ -58,7 +59,7 @@ void BitcoinExchange::handleInputFile(std::string fileName)
             continue;
         }
         std::string datePart = line.substr(0, 10);
-        std::string valuePart = line.substr(sep + 2);
+        std::string valuePart = line.substr(sep + 1);
         if (datePart.length() != 10) {
             std::cout << "Error: bad input => " << line << std::endl;
             continue;
@@ -81,17 +82,13 @@ void BitcoinExchange::handleInputFile(std::string fileName)
             std::cout << "Error: bad input => " << line << std::endl;
             continue;
         }
-        if (valuePart[1] != ' ') {
-            std::cout << "Error: bad input => " << line << std::endl;
-            continue;
-        }
         double value = std::atof(valuePart.c_str());
         if (value < 0) {
-            std::cout << "Error: not a positive number.";
+            std::cout << "Error: not a positive number." << std::endl;
             continue;
         }
         if (value > 1000) {
-            std::cout << "Error: too large a number.";
+            std::cout << "Error: too large a number." << std::endl;
             continue;
         }
         std::map<std::string, double>::iterator it = _database.lower_bound(datePart);
@@ -120,34 +117,18 @@ bool BitcoinExchange::checkDate(int y, int m, int d) {
 }
 
 bool BitcoinExchange::checkDigits(std::string date) {
-    int i = 0;
-    while (date[i])
-    {
-        if (!std::isdigit(date[i]))
-        {
-            if (date[i] == '-')
-                continue;
-            else
-                return false;
-        }
-        i++;
+    for (size_t i = 0; i < date.length(); i++) {
+        if (!std::isdigit(date[i]) && date[i] != '-')
+            return false;
     }
     return true;
 }
 
 bool BitcoinExchange::checkExchangeRate(std::string rate)
 {
-    int i = 0;
-    while(rate[i])
-    {
-        if (!std::isdigit(rate[i]))
-        {
-            if (rate[i] == '.')
-                continue;
-            else
-                return false;
-        }
-        i++;
+    for (size_t i = 0; i < rate.length(); i++) {
+        if (!std::isdigit(rate[i]) && rate[i] != '.')
+            return false;
     }
     return true;
 }
