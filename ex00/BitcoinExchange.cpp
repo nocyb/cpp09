@@ -4,6 +4,35 @@ BitcoinExchange::BitcoinExchange() {
     std::ifstream data("data.csv");
     if (!data.is_open())
         throw(std::string) "cannot open the database file";
+    std::string dataLine;
+    getline(data, dataLine);
+    if (dataLine != "date ,exchange_rate")
+        throw(std::string) "wrong format for database file: date ,exchange_rate";
+    while (getline(data, dataLine))
+    {
+        size_t sep = dataLine.find(',');
+        if (sep == std::string::npos)
+            throw(std::string) "wrong format for database file: date ,exchange_rate";
+        std::string datePart = dataLine.substr(0, sep);
+        std::string exchangeRatePart = dataLine.substr(sep + 1);
+        if (!checkDigits(datePart))
+            throw(std::string) "error: only digits and - are allowed in data csv(date)";
+        if (!checkExchangeRate(exchangeRatePart))
+            throw(std::string) "error: only digits and . are allowed in data csv(exchangerate)";
+        double rate = std::atof(exchangeRatePart.c_str());
+        _database[datePart] = rate;
+    }
+}
+
+BitcoinExchange::BitcoinExchange(BitcoinExchange const &other)
+{
+    *this = other;
+}
+
+BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &other)
+{
+    _database = other._database;
+    return *this;
 }
 
 BitcoinExchange::~BitcoinExchange(){}
@@ -65,6 +94,17 @@ void BitcoinExchange::handleInputFile(std::string fileName)
             std::cout << "Error: too large a number.";
             continue;
         }
+        std::map<std::string, double>::iterator it = _database.lower_bound(datePart);
+        if (it != _database.end() && it->first = datePart) {
+            std::cout << datePart << " => " << value << " = " << (value * it->second) << std::endl;
+        }
+        else if (it == _database.begin())
+            std::cout << "Error: bad input " << datePart <<  " (too old)" << std::endl;
+        else
+        {
+            it--;
+            std::cout << datePart << " => " << value << " = " << (value * it->second) << std::endl;
+        }
     }
 }
 
@@ -85,7 +125,24 @@ bool BitcoinExchange::checkDigits(std::string date) {
     {
         if (!std::isdigit(date[i]))
         {
-            if (date[i] == 'i')
+            if (date[i] == '-')
+                continue;
+            else
+                return false;
+        }
+        i++;
+    }
+    return true;
+}
+
+bool BitcoinExchange::checkExchangeRate(std::string rate)
+{
+    int i = 0;
+    while(rate[i])
+    {
+        if (!std::isdigit(date[i]))
+        {
+            if (date[i] == '.')
                 continue;
             else
                 return false;
